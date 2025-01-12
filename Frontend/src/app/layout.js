@@ -4,7 +4,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { AuthContextProvider } from "../app/context/AuthContext";
 import { DarkModeProvider } from "./DarkModeContext";
-// import Ai from "@/Components/Ai/Ai";
+import Ai from "@/Components/Ai/Ai";
 import Cursor from "@/Components/Cursor/Cursor";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
           {children}
           </div>
         </div>
-        {/* <Ai /> */}
+        <Ai />
         </DarkModeProvider>
       </AuthContextProvider>
       </body>
