@@ -64,7 +64,7 @@ const Navbar = () => {
                             <NavLink href="/">Home</NavLink>
                             <NavLink href="/menu">Menu</NavLink>
                             <NavLink href="/recipes">Recipes</NavLink>
-                            <NavLink href="/about">About</NavLink>
+                            <NavLink href="/post">Post</NavLink>
 
                             <div className="px-2">
                                 {/* <DarkModeToggle /> */}
@@ -111,8 +111,9 @@ const Navbar = () => {
                     <div className="px-2 pt-2 pb-3 space-y-1">
                         <NavLink href="/">Home</NavLink>
                         <NavLink href="/menu">Menu</NavLink>
-                        <NavLink href="/Recipes">Recipes</NavLink>
+                        <NavLink href="/recipes">Recipes</NavLink>
                         <NavLink href="/about">About</NavLink>
+                        <NavLink href="/post">Post</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                         <div className="px-4 py-2">
                             <DarkModeToggle />

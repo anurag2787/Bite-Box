@@ -7,6 +7,7 @@ import Image from 'next/image'
 
 import { UserAuth } from "../context/AuthContext";
 import defaultImage from "@/lib/general.png"
+import Footer from "@/Components/Footer";
 
 
 const PostsPage = () => {
@@ -74,6 +75,7 @@ const PostsPage = () => {
   };
 
   return (
+    <>
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-300"}`}>
       {/* Header Section */}
       <div className="bg-gradient-to-r py-8 mb-3">
@@ -191,6 +193,8 @@ const PostsPage = () => {
       </div>
 
     </div>
+    <Footer />
+    </>
   );
 };
 
