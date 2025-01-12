@@ -37,6 +37,10 @@ app.use("/api/posts", postRoutes);
 app.use("/api/streams", streamRoutes);
 app.use('/api', ratingRoutes);
 
+app.get("/",(req,res)=>{
+  res.send("Your Server has Started!")
+});
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

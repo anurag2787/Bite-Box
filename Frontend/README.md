@@ -17,7 +17,7 @@ To get started with BiteBox, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/M-ayank2005/BiteBox.git
+    git clone https://github.com/anurag2787/BiteBox.git
     ```
 
 ## firebase setup: 
