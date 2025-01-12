@@ -1,26 +1,28 @@
-'use client'
+"use client";
 import { useDarkMode } from "@/app/DarkModeContext";
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
 function DarkModeToggle() {
   const { darkMode, toggleDarkMode } = useDarkMode();
 
   // Update the background color of the document body based on darkMode
   useEffect(() => {
-    document.body.style.backgroundColor = darkMode ? '#000000' : '#FFFFFF';
+    document.body.style.backgroundColor = darkMode ? "#000000" : "#FFFFFF";
   }, [darkMode]); // Correct dependency array
 
   return (
-    <div className='h-screen flex justify-center items-center'>
+    <div className="h-screen flex justify-center items-center">
       <div
         className={`flex justify-center items-center w-14 h-8 rounded-full ${
-          darkMode ? 'bg-zinc-950 border border-zinc-800' : 'bg-white border border-zinc-200'
+          darkMode
+            ? "bg-zinc-950 border border-zinc-800"
+            : "bg-white border border-zinc-200"
         }`}
       >
-        <div className='flex justify-center items-center' onClick={toggleDarkMode}>
+        <div className="flex justify-center items-center" onClick={toggleDarkMode}>
           <span
             className={`flex justify-center items-center px-1 py-1 rounded-full transition-colors duration-300 ${
-              darkMode ? 'bg-transparent text-gray-300' : 'bg-gray-200 text-black'
+              darkMode ? "bg-transparent text-gray-300" : "bg-gray-200 text-black"
             }`}
           >
             {/* Sun Icon */}
@@ -41,7 +43,7 @@ function DarkModeToggle() {
           </span>
           <span
             className={`flex justify-center items-center px-1 py-1 rounded-full transition-colors duration-300 ${
-              darkMode ? 'bg-zinc-800 text-white' : 'bg-transparent text-gray-500'
+              darkMode ? "bg-zinc-800 text-white" : "bg-transparent text-gray-500"
             }`}
           >
             {/* Moon Icon */}

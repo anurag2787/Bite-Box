@@ -16,9 +16,8 @@ function About() {
       </div>
       <div className="text-center mb-10 px-4">
         <p
-          className={`max-w-2xl mx-auto text-sm ${
-            darkMode ? " text-white" : "text-gray-800"
-          } animate-fade-in bg-clip-text`}
+          className={`max-w-2xl mx-auto text-sm ${darkMode ? " text-white" : "text-gray-800"
+            } animate-fade-in bg-clip-text`}
         >
           We are BiteBox – dedicated to inspiring food lovers by sharing
           mouthwatering recipes and providing a platform for everyone to share
@@ -73,8 +72,8 @@ function About() {
             reverse: true
           }
         ].map((section, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`flex flex-col ${section.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} w-full items-center lg:items-start border p-4 rounded-lg shadow-md group hover:shadow-xl transition-shadow duration-300`}
           >
             <div className="w-full lg:w-1/2 overflow-hidden rounded-lg">
@@ -99,7 +98,7 @@ function About() {
 
         <div className="text-center mt-12">
           <p className="text-lg text-gray-700 hover:text-gray-900 transition-colors">
-            Thank you for choosing BiteBox. Let's cook, share, and connect!
+            Thank you for choosing BiteBox. Let&#39;s cook, share, and connect!
           </p>
         </div>
       </div>
