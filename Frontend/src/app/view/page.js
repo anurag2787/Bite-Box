@@ -1,52 +1,61 @@
 import React from "react";
 
+// Define styled block components outside the render function
+const HeaderOne = (props) => (
+  <h1
+    className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+    {...props}
+  />
+);
+HeaderOne.displayName = "HeaderOne";
+
+const HeaderTwo = (props) => (
+  <h2
+    className="text-3xl font-semibold mb-3 text-gray-800 dark:text-gray-200"
+    {...props}
+  />
+);
+HeaderTwo.displayName = "HeaderTwo";
+
+const Blockquote = (props) => (
+  <blockquote
+    className="border-l-4 border-gray-400 pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r-lg"
+    {...props}
+  />
+);
+Blockquote.displayName = "Blockquote";
+
+const Unstyled = (props) => (
+  <p
+    className="text-lg leading-relaxed mb-4 text-gray-700 dark:text-gray-300"
+    {...props}
+  />
+);
+Unstyled.displayName = "Unstyled";
+
+// Main component
 const RecipeDetailsPage = ({ content }) => {
-  // Function to render styled content based on content.blocks
   const renderStyledContent = (content) => {
     if (!content || !content.blocks) return null;
 
     return content.blocks.map((block, index) => {
       const { text, type, inlineStyleRanges } = block;
 
-      // Define the styled block component based on the block type
+      // Choose the appropriate styled block component
       let StyledBlock;
       switch (type) {
         case "header-one":
-          StyledBlock = (props) => (
-            <h1
-              className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100"
-              {...props}
-            />
-          );
-          StyledBlock.displayName = "HeaderOne";
+          StyledBlock = HeaderOne;
           break;
         case "header-two":
-          StyledBlock = (props) => (
-            <h2
-              className="text-3xl font-semibold mb-3 text-gray-800 dark:text-gray-200"
-              {...props}
-            />
-          );
-          StyledBlock.displayName = "HeaderTwo";
+          StyledBlock = HeaderTwo;
           break;
         case "blockquote":
-          StyledBlock = (props) => (
-            <blockquote
-              className="border-l-4 border-gray-400 pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r-lg"
-              {...props}
-            />
-          );
-          StyledBlock.displayName = "Blockquote";
+          StyledBlock = Blockquote;
           break;
         case "unstyled":
         default:
-          StyledBlock = (props) => (
-            <p
-              className="text-lg leading-relaxed mb-4 text-gray-700 dark:text-gray-300"
-              {...props}
-            />
-          );
-          StyledBlock.displayName = "Unstyled";
+          StyledBlock = Unstyled;
       }
 
       // Handle inline styles like bold, italic, and underline
