@@ -27,7 +27,7 @@ const CustomerReviewForm = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/rating/', {
+      const response = await axios.post('https://bite-box-beta.vercel.app/api/rating/', {
         email: user.email,
         review,
         rating,

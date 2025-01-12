@@ -48,7 +48,7 @@ const PostsPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${import.meta.env.NEXT_BACKEND_URL}/api/posts/`);
+        const response = await fetch("https://bite-box-beta.vercel.app/api/posts/");
         const data = await response.json();
         // Sort posts by createdAt in descending order (latest first)
         const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

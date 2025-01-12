@@ -15,7 +15,7 @@ const RecipesPage = () => {
     const fetchRecipes = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.NEXT_BACKEND_URL}/api/recipes?limit=100`
+          "https://bite-box-beta.vercel.app/api/recipes?limit=100"
         );
         setRecipes(response.data);
       } catch (error) {
@@ -79,7 +79,7 @@ const RecipesPage = () => {
     // Send the like request to the backend
     try {
       const response = await axios.put(
-        `${import.meta.env.NEXT_BACKEND_URL}/api/recipes/${recipeId}/like`,
+        "https://bite-box-beta.vercel.app/api/recipes/${recipeId}/like",
         { userId }
       );
 
