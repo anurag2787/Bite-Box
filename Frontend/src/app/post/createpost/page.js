@@ -30,7 +30,7 @@ function Page() { // Updated component name
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/posts/`, // Corrected the environment variable
+        "https://bite-box-beta.vercel.app/api/posts/", // Corrected the environment variable
         {
           title,
           content,

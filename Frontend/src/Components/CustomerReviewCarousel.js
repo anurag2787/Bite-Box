@@ -22,7 +22,7 @@ const CustomerReviewCarousel = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/reviews'); // Replace with your actual backend API URL
+        const response = await axios.get('https://bite-box-beta.vercel.app/api/reviews'); // Replace with your actual backend API URL
         setReviews(response.data.data); // Assuming the reviews are in `data.data`
       } catch (error) {
         console.error('Error fetching reviews:', error);

@@ -35,7 +35,7 @@ const PostDetailsPageContent = () => {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/posts/${postId}`);
+        const response = await axios.get("https://bite-box-beta.vercel.app/api/posts/${postId}");
         setPost(response.data);
         setIsLiked(response.data.likes?.some((like) => like.userId === userId));
       } catch (err) {
