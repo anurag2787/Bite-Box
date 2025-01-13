@@ -1,145 +1,121 @@
-"use client";
-import React, { useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
-import { useDarkMode } from "../DarkModeContext";
-import loader from "@/Components/loader";
-import { Heart } from "lucide-react";
-import { format } from "date-fns";
-import { UserAuth } from "../context/AuthContext";
+import React from "react";
 
-// Separate the content rendering logic
-const renderStyledContent = (content) => {
-  // ... (previous renderStyledContent code remains the same)
-};
+// Define styled block components outside the render function
+const HeaderOne = (props) => (
+  <h1
+    className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+    {...props}
+  />
+);
+HeaderOne.displayName = "HeaderOne";
 
-// Create a separate component for the recipe content
-const RecipeContent = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [recipe, setRecipe] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLiked, setIsLiked] = useState(false);
-  const { darkMode } = useDarkMode();
-  const { user } = UserAuth();
+const HeaderTwo = (props) => (
+  <h2
+    className="text-3xl font-semibold mb-3 text-gray-800 dark:text-gray-200"
+    {...props}
+  />
+);
+HeaderTwo.displayName = "HeaderTwo";
 
-  const userId = user ? user.email : null;
+const Blockquote = (props) => (
+  <blockquote
+    className="border-l-4 border-gray-400 pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r-lg"
+    {...props}
+  />
+);
+Blockquote.displayName = "Blockquote";
 
-  const extractYouTubeId = (url) => {
-    if (!url) return null;
-    const regex = /(?:youtube\.com\/(?:[^\/\n\s]*\/\S+\/|\S+\/|\S+\/v=|v\/|e(?:mbed)?\/|watch\?v=|embed\/v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  };
+const Unstyled = (props) => (
+  <p
+    className="text-lg leading-relaxed mb-4 text-gray-700 dark:text-gray-300"
+    {...props}
+  />
+);
+Unstyled.displayName = "Unstyled";
 
-  useEffect(() => {
-    const id = searchParams.get("id");
+// Main component
+const RecipeDetailsPage = ({ content }) => {
+  const renderStyledContent = (content) => {
+    if (!content || !content.blocks) return null;
 
-    if (!id) {
-      setError("Missing required recipe data");
-      return;
-    }
+    return content.blocks.map((block, index) => {
+      const { text, type, inlineStyleRanges } = block;
 
-    const fetchRecipe = async () => {
-      try {
-        const response = await axios.get(
-          `https://bite-box-beta.vercel.app/api/recipes/${encodeURIComponent(id)}`
-        );
-        setRecipe(response.data);
-        if (userId) {
-          const alreadyLiked =
-            Array.isArray(response.data.likes) &&
-            response.data.likes.some((like) => like.userId === userId);
-          setIsLiked(alreadyLiked);
-        }
-      } catch (err) {
-        setError("Unable to load recipe details");
-        console.error("Error fetching recipe details:", err);
+      // Choose the appropriate styled block component
+      let StyledBlock;
+      switch (type) {
+        case "header-one":
+          StyledBlock = HeaderOne;
+          break;
+        case "header-two":
+          StyledBlock = HeaderTwo;
+          break;
+        case "blockquote":
+          StyledBlock = Blockquote;
+          break;
+        case "unstyled":
+        default:
+          StyledBlock = Unstyled;
       }
-    };
 
-    fetchRecipe();
-  }, [searchParams, userId]);
+      // Handle inline styles like bold, italic, and underline
+      let styledText = text;
+      if (inlineStyleRanges.length > 0) {
+        inlineStyleRanges.forEach((range) => {
+          const { offset, length, style } = range;
+          const start = styledText.slice(0, offset);
+          const middle = styledText.slice(offset, offset + length);
+          const end = styledText.slice(offset + length);
 
-  const handleLike = async () => {
-    if (!user || !recipe) return;
+          let styledFragment;
+          switch (style) {
+            case "BOLD":
+              styledFragment = (
+                <strong className="font-bold text-gray-900 dark:text-gray-100">
+                  {middle}
+                </strong>
+              );
+              break;
+            case "ITALIC":
+              styledFragment = (
+                <em className="italic text-gray-700 dark:text-gray-300">
+                  {middle}
+                </em>
+              );
+              break;
+            case "UNDERLINE":
+              styledFragment = (
+                <u className="underline text-gray-800 dark:text-gray-200">
+                  {middle}
+                </u>
+              );
+              break;
+            default:
+              styledFragment = middle;
+          }
 
-    const userId = user.email;
+          styledText = (
+            <>
+              {start}
+              {styledFragment}
+              {end}
+            </>
+          );
+        });
+      }
 
-    const alreadyLiked =
-      Array.isArray(recipe.likes) &&
-      recipe.likes.some((like) => like.userId === userId);
-
-    if (alreadyLiked) {
-      alert("You have already liked this recipe!");
-      return;
-    }
-
-    try {
-      await axios.put(
-        `https://bite-box-beta.vercel.app/api/recipes/${recipe._id}/like`,
-        { userId }
-      );
-
-      setRecipe((prevRecipe) => ({
-        ...prevRecipe,
-        likes: [...prevRecipe.likes, { userId }]
-      }));
-      setIsLiked(true);
-    } catch (err) {
-      console.error("Error liking recipe:", err);
-    }
+      // Render the styled block with the styled text
+      return <StyledBlock key={index}>{styledText}</StyledBlock>;
+    });
   };
-
-  if (error) {
-    return (
-      <div
-        className={`min-h-screen flex items-center justify-center ${
-          darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
-        }`}
-      >
-        <p className="text-red-500 text-xl font-semibold">{error}</p>
-      </div>
-    );
-  }
-
-  if (!recipe) {
-    return <div>{loader()}</div>;
-  }
-
-  const youtubeId = extractYouTubeId(recipe.youtube);
-  const parsedContent = recipe.content ? JSON.parse(recipe.content) : null;
-  
-  const createdDate = recipe.createdAt ? new Date(recipe.createdAt) : new Date();
-  const formattedDate = createdDate instanceof Date && !isNaN(createdDate) 
-    ? format(createdDate, "MMMM dd, yyyy")
-    : "Date not available";
 
   return (
-    <div
-      className={`min-h-screen w-full py-12 px-4 transition-colors duration-300 ${
-        darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
-      }`}
-    >
-      {/* Rest of the JSX remains the same */}
-      <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden transform transition-all hover:scale-[1.01]">
-        {/* ... (previous JSX content remains the same) */}
+    <div className="container mx-auto p-4">
+      <div className="prose dark:prose-invert">
+        {renderStyledContent(content)}
       </div>
     </div>
   );
 };
-
-RecipeContent.displayName = 'RecipeContent';
-
-// Main component with Suspense boundary
-const RecipeDetailsPage = () => {
-  return (
-    <Suspense fallback={<div>{loader()}</div>}>
-      <RecipeContent />
-    </Suspense>
-  );
-};
-
-RecipeDetailsPage.displayName = 'RecipeDetailsPage';
 
 export default RecipeDetailsPage;
