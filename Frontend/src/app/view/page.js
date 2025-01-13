@@ -6,7 +6,7 @@ import { useDarkMode } from "../DarkModeContext";
 import loader from "@/Components/loader";
 import { Heart } from "lucide-react";
 import { format } from "date-fns";
-import { UserAuth } from "../context/AuthContext"; // Ensure the correct import
+import { UserAuth } from "../context/AuthContext";
 
 const renderStyledContent = (content) => {
   if (!content || !content.blocks) return null;
@@ -14,28 +14,37 @@ const renderStyledContent = (content) => {
   return content.blocks.map((block, index) => {
     const { text, type, inlineStyleRanges } = block;
 
+    // Define components with display names
+    const HeaderOne = React.memo(function HeaderOne(props) {
+      return <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100" {...props} />;
+    });
+
+    const HeaderTwo = React.memo(function HeaderTwo(props) {
+      return <h2 className="text-3xl font-semibold mb-3 text-gray-800 dark:text-gray-200" {...props} />;
+    });
+
+    const BlockQuote = React.memo(function BlockQuote(props) {
+      return <blockquote className="border-l-4 border-gray-400 pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r-lg" {...props} />;
+    });
+
+    const Paragraph = React.memo(function Paragraph(props) {
+      return <p className="text-lg leading-relaxed mb-4 text-gray-700 dark:text-gray-300" {...props} />;
+    });
+
     let StyledBlock;
     switch (type) {
       case "header-one":
-        StyledBlock = (props) => (
-          <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100" {...props} />
-        );
+        StyledBlock = HeaderOne;
         break;
       case "header-two":
-        StyledBlock = (props) => (
-          <h2 className="text-3xl font-semibold mb-3 text-gray-800 dark:text-gray-200" {...props} />
-        );
+        StyledBlock = HeaderTwo;
         break;
       case "blockquote":
-        StyledBlock = (props) => (
-          <blockquote className="border-l-4 border-gray-400 pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r-lg" {...props} />
-        );
+        StyledBlock = BlockQuote;
         break;
       case "unstyled":
       default:
-        StyledBlock = (props) => (
-          <p className="text-lg leading-relaxed mb-4 text-gray-700 dark:text-gray-300" {...props} />
-        );
+        StyledBlock = Paragraph;
     }
 
     let styledText = text;
@@ -76,11 +85,10 @@ const RecipeDetailsPage = () => {
   const [error, setError] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
   const { darkMode } = useDarkMode();
-  const { user } = UserAuth(); // Access user from the AuthContext
+  const { user } = UserAuth();
 
-  const userId = user ? user.email : null; // Use user.email if user is authenticated
+  const userId = user ? user.email : null;
 
-  // Extract YouTube ID correctly
   const extractYouTubeId = (url) => {
     if (!url) return null;
     const regex = /(?:youtube\.com\/(?:[^\/\n\s]*\/\S+\/|\S+\/|\S+\/v=|v\/|e(?:mbed)?\/|watch\?v=|embed\/v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -102,12 +110,11 @@ const RecipeDetailsPage = () => {
           `https://bite-box-beta.vercel.app/api/recipes/${encodeURIComponent(id)}`
         );
         setRecipe(response.data);
-        // Check if user already liked the recipe
         if (userId) {
           const alreadyLiked =
             Array.isArray(response.data.likes) &&
             response.data.likes.some((like) => like.userId === userId);
-          setIsLiked(alreadyLiked); // Set initial like state
+          setIsLiked(alreadyLiked);
         }
       } catch (err) {
         setError("Unable to load recipe details");
@@ -121,31 +128,28 @@ const RecipeDetailsPage = () => {
   const handleLike = async () => {
     if (!user || !recipe) return;
 
-    const userId = user.email; // Use user email as the unique userId
+    const userId = user.email;
 
-    // Check if the user already liked the recipe
     const alreadyLiked =
       Array.isArray(recipe.likes) &&
       recipe.likes.some((like) => like.userId === userId);
 
     if (alreadyLiked) {
       alert("You have already liked this recipe!");
-      return; // Don't proceed if already liked
+      return;
     }
 
     try {
-      // Send the like request to the backend
       const response = await axios.put(
         `https://bite-box-beta.vercel.app/api/recipes/${recipe._id}/like`,
         { userId }
       );
 
-      // Update the recipe's likes and set the liked state
       setRecipe((prevRecipe) => ({
         ...prevRecipe,
-        likes: [...prevRecipe.likes, { userId }] // Add the current user's like to the list
+        likes: [...prevRecipe.likes, { userId }]
       }));
-      setIsLiked(true); // Mark as liked
+      setIsLiked(true);
     } catch (err) {
       console.error("Error liking recipe:", err);
     }
@@ -170,7 +174,6 @@ const RecipeDetailsPage = () => {
   const youtubeId = extractYouTubeId(recipe.youtube);
   const parsedContent = recipe.content ? JSON.parse(recipe.content) : null;
   
-  // Check for valid createdAt date
   const createdDate = recipe.createdAt ? new Date(recipe.createdAt) : new Date();
 
   const formattedDate = createdDate instanceof Date && !isNaN(createdDate) 
@@ -259,5 +262,8 @@ const RecipeDetailsPage = () => {
     </div>
   );
 };
+
+// Add display name to the main component
+RecipeDetailsPage.displayName = 'RecipeDetailsPage';
 
 export default RecipeDetailsPage;
