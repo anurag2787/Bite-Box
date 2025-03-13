@@ -17,7 +17,8 @@ app.use(cors({
   origin: [
     "https://bite-box-chi.vercel.app",
     "https://bite-nsoh1so0t-m-ayank2005s-projects.vercel.app",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://bitebox-w.vercel.app"
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
