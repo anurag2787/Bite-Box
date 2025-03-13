@@ -17,7 +17,7 @@ To get started with BiteBox, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/anurag2787/BiteBox.git
+    git clone https://github.com/M-ayank2005/BiteBox.git
     ```
 
 ## firebase setup: 
@@ -73,9 +73,25 @@ We welcome contributions to the BiteBox project! To contribute, please follow th
 
 For detailed contribution guidelines, please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Recent Updates
+
+- **[c93611a](https://github.com/M-ayank2005/BiteBox/commit/c93611abb5e42916cfb47f92872175add4b17c64)**: Created `contribution.md`.
+- **[4805b12](https://github.com/M-ayank2005/BiteBox/commit/4805b12968caf2ae1025cea466ddb9d57cc0eca1)**: Merged pull request and added `stackbit.config.ts`.
+- **[ecf2bb1](https://github.com/M-ayank2005/BiteBox/commit/ecf2bb1a613e2dd315188e12cf5866e56dbec69d)**: Added `stackbit.config.ts`.
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any inquiries or feedback, feel free to reach out to the project maintainer:
+
+- **Mayank Mishra**
+- [GitHub Profile](https://github.com/M-ayank2005)
+- **Anurag Yadav**
+- [GitHub Profile](https://github.com/anurag2787)
+
+---
 
 Thank you for visiting BiteBox! We hope you enjoy using our platform as much as we enjoyed building it.

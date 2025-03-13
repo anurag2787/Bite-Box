@@ -14,9 +14,12 @@ import { useDarkMode } from './DarkModeContext'
 import './globals.css' // Import the CSS file where we'll define the blinking cursor class
 import CustomerReviewCarousel from '@/Components/CustomerReviewCarousel'
 import recipes from '../lib/Homepagerecipe.json'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation' 
 
 export default function Home() {
   const { darkMode } = useDarkMode()
+  const router = useRouter()
 
   // List of attributes
   const attributes = [
@@ -109,17 +112,19 @@ export default function Home() {
         <CustomerReviewCarousel />
       </Section>
       <Section>
-      <div className={`flex flex-col items-center justify-center mx-auto w-1/2 p-6 ${
+      <div className={`flex flex-col items-center justify-center mx-auto w-full sm:w-3/4 md:w-2/3 lg:w-1/2 p-4 sm:p-6 ${
       darkMode ? 'bg-gray-700 text-white' : 'bg-slate-200 text-black'
       } rounded-xl shadow-md mb-8`}>
-      <h3 className="text-2xl md:text-3xl font-bold mb-3">Enjoyed our service?</h3>
-      <p className="text-lg mb-4">Share your experience with us!</p>
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 text-center">Enjoyed our service?</h3>
+      <p className="text-base sm:text-lg mb-3 sm:mb-4 text-center">Share your experience with us!</p>
+      <router>
       <button 
-        onClick={() => window.location.href = '/custoratings'} 
-        className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition duration-300 transform hover:scale-105"
+        onClick={() => router.push('/custoratings')} 
+        className="bg-blue-500 hover:bg-blue-600 text-white px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition duration-300 transform hover:scale-105"
       >
         Rate Us
       </button>
+      </router>
       </div>
       </Section>
 

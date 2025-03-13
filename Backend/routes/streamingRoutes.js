@@ -10,7 +10,7 @@ const Stream = require("../models/stream");
 // 1. Start a new stream
 router.post("/", async (req, res) => {
   try {
-    const { userId, username, title, description,thumbnail } = req.body;
+    const { userId, username, title, description,thumbnail,streamId } = req.body;
 
     const stream = new Stream({
       user: userId,
@@ -18,6 +18,7 @@ router.post("/", async (req, res) => {
       title,
       description,
       thumbnail,
+      streamId,
     });
 
     await stream.save();
@@ -52,7 +53,7 @@ router.put("/:streamId/end", async (req, res) => {
   try {
     const { streamId } = req.params;
 
-    const stream = await Stream.findById(streamId);
+    const stream = await Stream.findOne({ streamId: req.params.streamId })
     if (!stream || !stream.isLive) {
       return res.status(404).json({ message: "Live stream not found!" });
     }
@@ -72,7 +73,7 @@ router.put("/:streamId/end", async (req, res) => {
 router.put("/:streamId/like", async (req, res) => {
     try {
       const { userId } = req.body;  
-      const stream = await Stream.findById(req.params.streamId);
+      const stream = await Stream.findOne({ streamId: req.params.streamId })
       
       if (!stream) {
         return res.status(404).json({ message: "Stream not found!" });
@@ -99,7 +100,7 @@ router.put("/:streamId/like", async (req, res) => {
 router.put("/:streamId/unlike", async (req, res) => {
     try {
       const { userId } = req.body;  // Get userId from request body
-      const stream = await Stream.findById(req.params.streamId);
+      const stream = await Stream.findOne({ streamId: req.params.streamId })
   
       if (!stream) {
         return res.status(404).json({ message: "Stream not found!" });
@@ -121,7 +122,7 @@ router.put("/:streamId/unlike", async (req, res) => {
 router.post("/:streamId/comment", async (req, res) => {
   try {
     const { userId, text } = req.body;
-    const stream = await Stream.findById(req.params.streamId);
+    const stream = await Stream.findOne({ streamId: req.params.streamId })
     if (!stream) {
       return res.status(404).json({ message: "Stream not found!" });
     }
@@ -137,7 +138,7 @@ router.post("/:streamId/comment", async (req, res) => {
 // 8. Get a stream's details (with comments and likes)
 router.get("/:streamId", async (req, res) => {
   try {
-    const stream = await Stream.findById(req.params.streamId)
+    const stream = await Stream.findOne({ streamId: req.params.streamId })
       .populate("user")
       .populate({
         path: "comments",
@@ -156,7 +157,7 @@ router.get("/:streamId", async (req, res) => {
 // 9. Delete a comment from a stream
 router.delete("/:streamId/comment/:commentId", async (req, res) => {
   try {
-    const stream = await Stream.findById(req.params.streamId);
+    const stream = await Stream.findOne({ streamId: req.params.streamId })
     if (!stream) {
       return res.status(404).json({ message: "Stream not found!" });
     }
@@ -175,4 +176,63 @@ router.delete("/:streamId/comment/:commentId", async (req, res) => {
   }
 });
 
+// ========================
+// STREAM JOIN AND LEAVE ROUTES
+// ========================
+
+// 10. Join a stream (create a WebRTC session and generate SDP offer)
+router.post("/:streamId/join", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { streamId } = req.params;
+
+    const stream = await Stream.findOne({ streamId: streamId })
+    if (!stream || !stream.isLive) {
+      return res.status(404).json({ message: "Stream not live or not found!" });
+    }
+
+    // Create a WebRTC offer and associate it with the stream (this could be a signaling server step)
+    const peerConnection = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    });
+
+    // Generate an SDP offer
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    // Store or handle the offer (this could be saved to a database or cached for later use)
+    // Here we assume you will return the offer to the client
+    res.status(200).json({ offer: offer });
+
+    // Optionally, you can store some session data related to the user joining the stream
+    // such as adding the user to a list of participants in your database.
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 11. Leave a stream (close the WebRTC session)
+router.post("/:streamId/leave", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { streamId } = req.params;
+
+    const stream = await Stream.findOne({ streamId: streamId })
+    if (!stream || !stream.isLive) {
+      return res.status(404).json({ message: "Stream not found or not live!" });
+    }
+
+    // Logic for cleaning up the WebRTC session when the user leaves
+    // This could be clearing out session data for the participant, disconnecting from the room, etc.
+    // Close the WebRTC peer connection on the backend if necessary
+
+    res.status(200).json({ message: "User left the stream!" });
+
+    // Optionally, you can update the stream's participant list or handle session cleanup.
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//dep
 module.exports = router;

@@ -10,11 +10,10 @@ export const DarkModeProvider = ({ children }) => {
 
   useEffect(() => {
     const savedMode = localStorage.getItem("darkMode");
-
     if (savedMode !== null) {
       setDarkMode(savedMode === "true");
     } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches;
       setDarkMode(prefersDark);
     }
   }, []);

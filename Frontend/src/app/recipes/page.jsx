@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { UserAuth } from "../context/AuthContext";
 import { Heart } from "lucide-react";
+import Loader from "@/Components/loader";
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -15,7 +16,7 @@ const RecipesPage = () => {
     const fetchRecipes = async () => {
       try {
         const response = await axios.get(
-          "https://bite-box-beta.vercel.app/api/recipes?limit=100"
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/api/recipes?limit=100`
         );
         setRecipes(response.data);
       } catch (error) {
@@ -79,7 +80,7 @@ const RecipesPage = () => {
     // Send the like request to the backend
     try {
       const response = await axios.put(
-        "https://bite-box-beta.vercel.app/api/recipes/${recipeId}/like",
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/api/recipes/${recipeId}/like`,
         { userId }
       );
 
@@ -109,54 +110,59 @@ const RecipesPage = () => {
         <h1 className="text-3xl font-bold">Recipes</h1>
         <button
           onClick={handlePostRecipeClick}
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
+          className="bg-blue-500 text-white ml-2 md:ml-0 md:text-sm text-xs px-4 py-2 rounded-xl hover:bg-blue-600"
         >
           Post New Recipe
         </button>
       </div>
-
+      {recipes.length === 0 && (<div className="w-full"><Loader/></div>)}
       {/* Recipe Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {recipes.map((recipe) => (
-          <div
-            key={recipe._id}
-            className="border rounded-lg p-4 cursor-pointer hover:shadow-lg"
-            onClick={() => handleRecipeClick(recipe)}
-          >
-            {/* Cover Image */}
-            <img
-              src={recipe.coverImage}
-              alt={recipe.title}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-            {/* Title and Likes */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">{recipe.title}</h2>
-              <div className="flex items-center">
-                <button onClick={(e) => likeClick(e, recipe._id)}>
-                  <Heart
-                    fill={
-                      Array.isArray(recipe.likes) &&
-                      recipe.likes.some((like) => like.userId === user?.email)
-                        ? "#ec4899"
-                        : "none"
-                    }
-                    stroke={
-                      Array.isArray(recipe.likes) &&
-                      recipe.likes.some((like) => like.userId === user?.email)
-                        ? "#ec4899"
-                        : "currentColor"
-                    }
-                    className="w-6 h-6"
-                  />
-                </button>
-                <span className="text-lg ml-2">
-                  {Array.isArray(recipe.likes) ? recipe.likes.length : 0}
-                </span>
+        
+
+        {recipes.length>0 && ( <>
+          {recipes.map((recipe) => (
+            <div
+              key={recipe._id}
+              className="border rounded-lg p-4 cursor-pointer hover:shadow-lg"
+              onClick={() => handleRecipeClick(recipe)}
+            >
+              {/* Cover Image */}
+              <img
+                src={recipe.coverImage}
+                alt={recipe.title}
+                className="w-full h-48 object-cover rounded-md mb-4"
+              />
+              {/* Title and Likes */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">{recipe.title}</h2>
+                <div className="flex items-center">
+                  <button onClick={(e) => likeClick(e, recipe._id)}>
+                    <Heart
+                      fill={
+                        Array.isArray(recipe.likes) &&
+                        recipe.likes.some((like) => like.userId === user?.email)
+                          ? "#ec4899"
+                          : "none"
+                      }
+                      stroke={
+                        Array.isArray(recipe.likes) &&
+                        recipe.likes.some((like) => like.userId === user?.email)
+                          ? "#ec4899"
+                          : "currentColor"
+                      }
+                      className="w-6 h-6"
+                    />
+                  </button>
+                  <span className="text-lg ml-2">
+                    {Array.isArray(recipe.likes) ? recipe.likes.length : 0}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+          </>
+      )}
       </div>
     </div>
   );

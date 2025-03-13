@@ -10,8 +10,8 @@ The BiteBox backend is a Node.js application that provides API endpoints for man
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/anurag2787/BiteBox.git
-   cd Backend
+   git clone https://github.com/M-ayank2005/BiteBoxBackend.git
+   cd BiteBoxBackend
    ```
 Install the dependencies:
 
@@ -20,7 +20,7 @@ npm install
 Create a .env file in the root directory and add your MongoDB URI and other environment variables:
 
 MONGO_URI=your_mongodb_uri
-PORT=3000
+PORT=5000
 
 Usage
 

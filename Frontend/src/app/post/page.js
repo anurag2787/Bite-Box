@@ -7,8 +7,8 @@ import Image from 'next/image'
 
 import { UserAuth } from "../context/AuthContext";
 import defaultImage from "@/lib/general.png"
-import Footer from "@/Components/Footer";
 
+const BACKEND_URL = process.env.NEXT_BACKEND_URL || 'http://localhost:5000';
 
 const PostsPage = () => {
   const [posts, setPosts] = useState([]);
@@ -25,7 +25,7 @@ const PostsPage = () => {
   }, []);
 
   const handleShare = (id) => {
-    const currentUrl = window.location.href + `viewpost/?id=${id}`;
+    const currentUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/viewpost/?id=${id}`;
 
     if (navigator.share) {
       navigator.share({
@@ -49,7 +49,7 @@ const PostsPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("https://bite-box-beta.vercel.app/api/posts/");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/posts/`);
         const data = await response.json();
         // Sort posts by createdAt in descending order (latest first)
         const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -75,10 +75,9 @@ const PostsPage = () => {
   };
 
   return (
-    <>
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-300"}`}>
       {/* Header Section */}
-      <div className="bg-gradient-to-r py-8 mb-3">
+      <div className="bg-gradient-to-r py-8 mb-3 ">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div>
@@ -87,7 +86,7 @@ const PostsPage = () => {
             </div>
               <button
                 onClick={handleCreatePost}
-                className="flex items-center gap-2 bg-white text-yellow-600 px-6 py-3 rounded-full hover:bg-gray-300 transition-all duration-100 shadow-lg font-medium"
+                className="flex items-center md:gap-2 bg-white text-yellow-600 px-2 py-1 text-[10px] md:px-6 md:py-3 rounded-full hover:bg-gray-300 transition-all duration-100 shadow-lg font-medium"
               >
                 <Plus size={20} />
                 <span>Start Discussion</span>
@@ -193,8 +192,6 @@ const PostsPage = () => {
       </div>
 
     </div>
-    <Footer />
-    </>
   );
 };
 

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { UserAuth } from "../app/context/AuthContext";
 import DarkModeToggle from './DarkModeToggle';
 import { Menu, X } from 'lucide-react';
-import modeToggle from './modeToggle';
+import ModeToggle from './modeToggle';
 
 const Navbar = () => {
     const { user, logOut, loading } = UserAuth();
@@ -64,11 +64,11 @@ const Navbar = () => {
                             <NavLink href="/">Home</NavLink>
                             <NavLink href="/menu">Menu</NavLink>
                             <NavLink href="/recipes">Recipes</NavLink>
-                            <NavLink href="/post">Post</NavLink>
+                            <NavLink href="/more">Community</NavLink>
 
                             <div className="px-2">
                                 {/* <DarkModeToggle /> */}
-                                {modeToggle()}
+                                {ModeToggle()}
                             </div>
                         </div>
                         
@@ -107,35 +107,36 @@ const Navbar = () => {
 
             {/* Mobile menu */}
             {isOpen && (
-                <div className="md:hidden bg-yellow-500 shadow-inner">
-                    <div className="px-2 pt-2 pb-3 space-y-1">
-                        <NavLink href="/">Home</NavLink>
-                        <NavLink href="/menu">Menu</NavLink>
-                        <NavLink href="/recipes">Recipes</NavLink>
-                        <NavLink href="/about">About</NavLink>
-                        <NavLink href="/post">Post</NavLink>
-                        <NavLink href="/contact">Contact</NavLink>
-                        <div className="px-4 py-2">
-                            <DarkModeToggle />
-                        </div>
-                        
-                        {!loading && (
-                            <div className="space-y-2 px-4 py-2">
-                                {!user ? (
-                                    <Link href="/LoginPage" className="block">
-                                        <AuthButton>Login</AuthButton>
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link href="/profile" className="block">
-                                            <AuthButton>Profile</AuthButton>
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        )}
+                <div className="md:hidden bg-yellow-500 shadow-inner h-full">
+                <div className="px-2 pt-2 pb-3 space-y-1 flex flex-col items-center font-semibold">
+                    <NavLink href="/" className="text-center w-full">Home</NavLink>
+                    <NavLink href="/menu" className="text-center w-full">Menu</NavLink>
+                    <NavLink href="/recipes" className="text-center w-full">Recipes</NavLink>
+                    <NavLink href="/more" className="text-center w-full">Community</NavLink>
+                    <NavLink href="/contact" className="text-center w-full">Contact</NavLink>
+                    <div className="px-2">
+                                {/* <DarkModeToggle /> */}
+                                {ModeToggle()}
                     </div>
+                    {/* <div className="">
+                        <DarkModeToggle />
+                    </div> */}
+                                    
+                    {!loading && (
+                        <div className="space-y-2 px-4 py-2 w-full flex flex-col items-center">
+                            {!user ? (
+                                <Link href="/LoginPage" className="block w-full max-w-xs">
+                                    <AuthButton>Login</AuthButton>
+                                </Link>
+                            ) : (
+                                <Link href="/profile" className="block w-full max-w-xs">
+                                    <AuthButton>Profile</AuthButton>
+                                </Link>
+                            )}
+                        </div>
+                    )}
                 </div>
+            </div>
             )}
         </nav>
     );

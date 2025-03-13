@@ -19,6 +19,7 @@ function Chat() {
   const [chatbotheader, setChatbotheader] = useState(true)
   const [count, setCount] = useState(0);
   const { darkMode } = useDarkMode()
+  
 
   // More conversational and flexible system prompts
   const SYSTEM_PROMPTS = [
@@ -59,7 +60,7 @@ function Chat() {
     async function generateInitial() {
       try {
         const response = await axios({
-          url: `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+          url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_API_KEY}`,
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
@@ -88,7 +89,7 @@ function Chat() {
         .join("\n")}\nUser: ${p3}`;
       try {
         const response = await axios({
-          url: `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+          url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_API_KEY}`,
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
@@ -126,12 +127,11 @@ function Chat() {
     setInput(message);
     // setQuickoption(false);
     await handleSendMessage(message);
-    handleSendMessage();
 
   }
+  
 
   async function handleSendMessage(inputMessage = null) {
-    setCount(count+1);
     // console.log(count);
     const messageToSend = (inputMessage || input || "").toString();    
     setQuickoption(false);
@@ -140,15 +140,12 @@ function Chat() {
       return;
     }
 
-    if (!messageToSend.trim()) {
+    if (!messageToSend) {
       alert("Please enter a message before sending.");
       return;
     }
 
     setAnswer("");
-    if (count == 1) {
-      setChatbotheader(false)
-    }
 
     // Generate the conversational prompt
     const prompt = `Conversation Context:
@@ -161,7 +158,7 @@ function Chat() {
 
     try {
       const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_API_KEY}`,
         method: "post",
         headers: { "Content-Type": "application/json" },
         data: {
@@ -182,10 +179,15 @@ function Chat() {
 
       setInput(""); // Clear the input after sending the message
       chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      setCount(count+1);
+      if (count == 1) {
+        setChatbotheader(false)
+      }
     } catch (error) {
       setAnswer("An error occurred. Please try again.");
       alert("Something went wrong. Please rephrase your request.");
     }
+    
   }
 
 
@@ -259,13 +261,13 @@ function Chat() {
     <div className={`w-full h-[92vh] flex flex-col ${darkMode ? "bg-gray-900 " : "bg-gray-100"} relative`}>
       {/* Header */}
       {chatbotheader ?
-        (<div className="fixed w-[80vh] z-50">
-          <header className="bg-emerald-600 text-white p-4 pr-10 pl-10 shadow-md flex justify-between items-center w-[80%] mx-auto mt-3 mb-6 rounded-full">
+        (<div className="fixed w-full sm:w-[80vh] z-50">
+          <header className="bg-emerald-600 text-white p-4 pr-4 pl-4 sm:pr-10 sm:pl-10 shadow-md flex justify-between items-center w-[95%] sm:w-[80%] mx-auto mt-3 mb-6 rounded-full">
             <div>
-              <h1 className="text-2xl font-bold">BiteBox AI</h1>
-              <p className="text-sm">Your Culinary Companion</p>
+              <h1 className="text-xl sm:text-2xl font-bold">BiteBox AI</h1>
+              <p className="text-xs sm:text-sm text-white/80">Your Culinary Companion</p>
             </div>
-            <div className="text-sm text-white/80">Powered by Gemini</div>
+            <div className="text-xs sm:text-sm text-white/80">Powered by Gemini</div>
           </header>
         </div>)
         : null}
@@ -300,48 +302,51 @@ function Chat() {
 
       {/* Input Area */}
       <div className={`${darkMode ? "bg-gray-950 " : "bg-white border-t"} p-4 shadow-inner`}>
-        {quickoption ? (<div className={` ${darkMode ? "text-white" : "text-black"} flex flex-col justify-center items-center`}>
-          <div className="text-black">
+      {quickoption ? (
+        <div className={` ${darkMode ? "text-white" : "text-black"} flex flex-col justify-center items-center`}>
+          <div className="text-black w-full px-2">
             <div className="flex items-center justify-center">
-              <h2 className={`${darkMode ? "text-white" : "text-black"} font-bold text-xl mb-3`}>Feeling Hungry? Here Are Some Quick Options! 🍔🍕</h2>
+              <h2 className={`${darkMode ? "text-white" : "text-black"} font-bold text-base sm:text-xl mb-3 text-center`}>
+                Feeling Hungry? Here Are Some Quick Options! 🍔🍕
+              </h2>
             </div>
-            <div className="flex items-center justify-center space-x-3 ">
+            <div className="flex flex-wrap items-center justify-center space-x-2 sm:space-x-3 text-xs">
               <div
-                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2`}
+                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2 mb-2`}
                 onClick={() => handleDivClick("Feeling spicy 🌶️. Any ideas?")}
               >
                 Craving dessert 🍰. Quick recipe?
               </div>
               <div
-                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2`}
+                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2 mb-2`}
                 onClick={() => handleDivClick("Got rice and veggies. What to cook?")}
               >
                 Got rice and veggies. What to cook?
               </div>
               <div
-                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2`}
-                onClick={() => handleDivClick("Pasta and tomatoes—what’s easy?")}
+                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2 mb-2`}
+                onClick={() => handleDivClick("Dish to impress family?")}
               >
                 Dish to impress family?
               </div>
             </div>
-            <div className="flex items-center justify-center space-x-3 mt-3 mb-4">
+            <div className="flex flex-wrap items-center justify-center space-x-2 sm:space-x-3 text-xs">
               <div
-                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2`}
+                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2 mb-2`}
                 onClick={() => handleDivClick("Suggest something unique to try!")}
               >
                 Suggest something unique to try!
               </div>
               <div
-                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2`}
+                className={`border border-gray-400 ${darkMode ? "bg-gray-300 " : null} p-2 rounded-full transition ease-in-out hover:scale-105 hover:bg-yellow-100 hover:border-2 mb-2`}
                 onClick={() => handleDivClick("Quick 10-min snack?")}
               >
                 Quick 10-min snack?
               </div>
             </div>
           </div>
-        </div>)
-          : null}
+        </div>
+      ) : null}
 
         <div className="flex space-x-4 max-w-4xl mx-auto">
           <input

@@ -28,6 +28,10 @@ const Cursor = () => {
     trail.style.pointerEvents = 'none';
     document.body.appendChild(trail);
 
+    if (window.innerWidth < 768) {
+      return; // Do not create cursor trail on smaller screens
+    }
+
     // Create circles
     const circles = Array.from({ length: 30 }, (_, index) => {
       const circle = document.createElement('div');
@@ -88,7 +92,7 @@ const Cursor = () => {
     };
 
     // Start animation and add event listener
-    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseMove);
     requestRef.current = requestAnimationFrame(animateCircles);
 
     // Disable default cursor
@@ -97,7 +101,7 @@ const Cursor = () => {
     // Cleanup
     return () => {
       cancelAnimationFrame(requestRef.current);
-      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleMouseMove);
       document.body.removeChild(trail);
       document.body.style.cursor = 'auto';
     };

@@ -22,7 +22,7 @@ const CustomerReviewCarousel = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get('https://bite-box-beta.vercel.app/api/reviews'); // Replace with your actual backend API URL
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/reviews`); // Replace with your actual backend API URL
         setReviews(response.data.data); // Assuming the reviews are in `data.data`
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -34,12 +34,12 @@ const CustomerReviewCarousel = () => {
 
   return (
     <div
-      className={`p-6 rounded-lg shadow-lg max-w-4xl mx-auto ${
+      className={`p-4 sm:p-6 rounded-lg shadow-lg max-w-full sm:max-w-4xl mx-auto ${
         darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'
       }`}
     >
       <h1
-        className={`text-center font-extrabold text-3xl mb-6 ${
+        className={`text-center font-extrabold text-2xl sm:text-3xl mb-4 sm:mb-6 ${
           darkMode ? 'text-gray-200' : 'text-blue-600'
         }`}
       >
@@ -50,12 +50,12 @@ const CustomerReviewCarousel = () => {
           reviews.map((review, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center justify-center text-center p-6 rounded-lg shadow-md ${
+              className={`flex flex-col items-center justify-center text-center p-4 sm:p-6 rounded-lg shadow-md ${
                 darkMode ? 'bg-gray-800' : 'bg-white'
               }`}
             >
               {/* Rating Stars */}
-              <div className="flex items-center mb-4">
+              <div className="flex items-center mb-2 sm:mb-4">
                 {[...Array(review.rating)].map((_, idx) => (
                   <svg
                     key={idx}
@@ -64,7 +64,7 @@ const CustomerReviewCarousel = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1}
                     stroke={darkMode ? 'white' : 'black'}
-                    className="w-6 h-6"
+                    className="w-4 h-4 sm:w-6 sm:h-6"
                   >
                     <path
                       strokeLinecap="round"
@@ -76,7 +76,7 @@ const CustomerReviewCarousel = () => {
               </div>
               {/* Review Text */}
               <p
-                className={`text-lg italic mb-4 ${
+                className={`text-base sm:text-lg italic mb-2 sm:mb-4 ${
                   darkMode ? 'text-gray-300' : 'text-gray-700'
                 }`}
               >
@@ -84,14 +84,14 @@ const CustomerReviewCarousel = () => {
               </p>
               {/* Customer Email */}
               <h3
-                className={`font-semibold text-xl ${
+                className={`font-semibold text-lg sm:text-xl ${
                   darkMode ? 'text-yellow-300' : 'text-blue-600'
                 }`}
               >
                 - {review.email}
               </h3>
               {/* Created At */}
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-xs sm:text-sm text-gray-500">
                 {new Date(review.createdAt).toLocaleDateString()}
               </p>
             </div>

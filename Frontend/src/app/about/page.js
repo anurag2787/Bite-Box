@@ -98,8 +98,9 @@ function About() {
 
         <div className="text-center mt-12">
           <p className="text-lg text-gray-700 hover:text-gray-900 transition-colors">
-            Thank you for choosing BiteBox. Let&#39;s cook, share, and connect!
+            {"Thank you for choosing BiteBox. Let's cook, share, and connect!"}
           </p>
+
         </div>
       </div>
       <Footer />

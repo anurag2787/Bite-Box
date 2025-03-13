@@ -97,7 +97,7 @@ const PostRecipePage = () => {
       };
 
       // Post the recipe data
-      const response = await axios.post("https://bite-box-beta.vercel.app/api/recipes", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/recipes`, {
         title,
         content,
         coverImage,

@@ -119,7 +119,7 @@ export const AuthContextProvider = ({ children }) => {
     const token = await getAuthToken();
     if (token) {
       try {
-        await axios.post('https://bite-box-beta.vercel.app/api/recipes', recipeData, {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/recipes`, recipeData, {
           headers: {
             Authorization: `Bearer ${token}`,  // Send the token in the header
           },
