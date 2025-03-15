@@ -112,8 +112,10 @@ const JoinLiveStream = () => {
         sdp: newPeer.localDescription,
         streamId: inputStreamId
       };
-
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/consumer`, payload);
+      // In your joinStream function
+      const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API || 'http://localhost:5000';
+      const { data } = await axios.post(`${apiUrl}/consumer`, payload);
+      // const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/consumer`, payload);
 
       // Handle the server response
       if (data.sdp) {
