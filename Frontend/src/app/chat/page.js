@@ -133,7 +133,7 @@ function Chat() {
 
   async function handleSendMessage(inputMessage = null) {
     // console.log(count);
-    const messageToSend = (inputMessage || input || "").toString();    
+    const messageToSend = (input || inputMessage || "").toString();    
     setQuickoption(false);
     if (!ready) {
       alert("Please wait while the AI is preparing...");
