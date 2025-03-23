@@ -19,15 +19,11 @@ app.use(cors({
     "https://bite-nsoh1so0t-m-ayank2005s-projects.vercel.app",
     "http://localhost:3000",
     "https://bitebox-w.vercel.app"
-    // Add any additional frontend URLs
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
 }));
-
+//anurag changed
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
