@@ -66,8 +66,12 @@ app.post("/broadcast", async (req, res) => {
     const streamId = generateStreamId();
     const peer = new webrtc.RTCPeerConnection({
       iceServers: [
-        { urls: "stun:stun.stunprotocol.org" },
-        { urls: "stun:stun.l.google.com:19302" }
+        { urls: "stun:stun.l.google.com:19302" }, // Free STUN server
+        { 
+          urls: "turn:YOUR_TURN_SERVER",
+          username: "USERNAME",
+          credential: "PASSWORD"
+        } // Add a TURN server for relay
       ]
     });
 
@@ -86,6 +90,10 @@ app.post("/broadcast", async (req, res) => {
     peer.onicecandidate = (event) => {
       if (event.candidate) {
         candidates.push(event.candidate);
+        console.log("New ICE Candidate:", event.candidate);
+      }
+      else {
+        console.log("ICE gathering complete!");
       }
     };
 
@@ -130,8 +138,12 @@ app.post('/consumer', checkStreamExists, async (req, res) => {
 
     const peer = new webrtc.RTCPeerConnection({
       iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "turn:your-turn-server.com", username: "user", credential: "pass" }
+        { urls: "stun:stun.l.google.com:19302" }, // Free STUN server
+        { 
+          urls: "turn:YOUR_TURN_SERVER",
+          username: "USERNAME",
+          credential: "PASSWORD"
+        } // Add a TURN server for relay
       ]
     });
 
@@ -140,8 +152,11 @@ app.post('/consumer', checkStreamExists, async (req, res) => {
     peer.onicecandidate = (event) => {
       if (event.candidate) {
         candidates.push(event.candidate);
+        console.log("New ICE Candidate:", event.candidate);
       }
-      console.log("New ICE Candidate:", event.candidate);
+      else {
+        console.log("ICE gathering complete!");
+      }
     };
 
     const desc = new webrtc.RTCSessionDescription(req.body.sdp);
