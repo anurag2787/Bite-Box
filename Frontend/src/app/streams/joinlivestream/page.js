@@ -3,10 +3,11 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useDarkMode } from "../../DarkModeContext";
 import { UserAuth } from "../../context/AuthContext";
+import { Heart, Send, X } from "lucide-react";
 
 const JoinLiveStream = () => {
   const { darkMode } = useDarkMode();
-  // const { user } = UserAuth();
+  const { user } = UserAuth();
 
   const [isConnected, setIsConnected] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
@@ -15,6 +16,16 @@ const JoinLiveStream = () => {
   const [inputStreamId, setInputStreamId] = useState('');
   const [peer, setPeer] = useState(null);
   const [connectionAttempts, setConnectionAttempts] = useState(0); // This was missing
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [likes, setLikes] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [error, setError] = useState(null);
+  const [streamData, setStreamData] = useState({
+      title: "",
+      description: "",
+      thumbnail: "",
+    });
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -174,6 +185,73 @@ const JoinLiveStream = () => {
     };
   }, []);
 
+  const handleAddComment = async () => {
+      if (!inputStreamId) return;
+      if (!commentText.trim()) return;
+  
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/api/streams/${inputStreamId}/comment`,
+          {
+            userId: user.email,
+            text: commentText,
+          }
+        );
+        setComments(response.data.comments);
+        setCommentText("");
+      } catch (err) {
+        console.error("Error adding comment:", err);
+      }
+    };
+  
+    const handleLikeStream = async () => {
+      if (!inputStreamId) return;
+      try {
+        if (!hasLiked) {
+          await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/streams/${inputStreamId}/like`, {
+            userId: user.email,
+          });
+          console.log("Like request data:", {
+            streamId: inputStreamId,
+            userId: user?.email
+          });
+          setLikes(prev => prev + 1);
+        } else {
+          await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/streams/${inputStreamId}/unlike`, {
+            userId: user.email,
+          });
+          setLikes(prev => prev - 1);
+        }
+        setHasLiked(!hasLiked);
+      } catch (err) {
+        console.error("Error toggling like:", err);
+      }
+    };
+
+    useEffect(() => {
+      const fetchStream = async () => {
+        if (!inputStreamId) return;
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/streams/${inputStreamId}`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+  
+          const data = await response.json();
+          setStreamData({
+            title: data.title || "",
+            description: data.description || "",
+            thumbnail: data.thumbnail || "",
+          });
+        } catch (error) {
+          setError(error.message);
+          console.error("Error fetching stream:", error);
+        }
+      };
+      fetchStream();
+  }, [inputStreamId]);
+
   return (
     <div className="p-4">
       <div className="max-w-4xl mx-auto">
@@ -206,6 +284,60 @@ const JoinLiveStream = () => {
                 Join Stream
               </button>
             )}
+            <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6`}>
+              <div className={`lg:col-span-2 space-y-6`}>
+                <div className={`p-6 rounded-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+                  <h1 className="text-2xl font-bold mb-2">{streamData.title}</h1>
+                  <p className={`${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    {streamData.description}
+                  </p>
+                  <div className="mt-4 flex items-center gap-4">
+                    <button
+                      onClick={handleLikeStream}
+                      className={`p-3 rounded-full ${hasLiked ? 'bg-red-500' : 'bg-gray-500'} hover:bg-red-600 text-white`}
+                    >
+                      <Heart className={`w-5 h-5 ${hasLiked ? 'fill-current' : ''}`} />
+                    </button>
+                    <span>{likes} likes</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className={`p-6 rounded-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+                <div className="flex flex-col h-[400px]">
+                  <h2 className="text-xl font-bold mb-4">Live Chat</h2>
+                  <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+                    {comments.map((comment, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-600 flex-shrink-0" />
+                        <div>
+                          <div className="font-semibold text-sm">{comment.user}</div>
+                          <p className="text-sm break-words">{comment.text}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                      className={`flex-1 p-2 rounded-lg border ${
+                        darkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                      }`}
+                      placeholder="Type a message..."
+                    />
+                    <button
+                      onClick={handleAddComment}
+                      className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg">
