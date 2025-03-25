@@ -113,7 +113,7 @@ const JoinLiveStream = () => {
         streamId: inputStreamId
       };
       // In your joinStream function
-      const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API || 'http://localhost:5000';
+      const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API;
       const { data } = await axios.post(`${apiUrl}/consumer`, payload);
       // const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/consumer`, payload);
 

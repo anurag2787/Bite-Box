@@ -13,16 +13,18 @@ const streams = new Map();
 const app = express();
 dotenv.config();
 // Middleware
-app.use(cors({
-  origin: [
-    "https://bite-box-chi.vercel.app",
-    "https://bite-nsoh1so0t-m-ayank2005s-projects.vercel.app",
-    "http://localhost:3000",
-    "https://bitebox-w.vercel.app"
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
-}));
+// app.use(cors({
+//   origin: [
+//     "https://bite-box-chi.vercel.app",
+//     "https://bite-nsoh1so0t-m-ayank2005s-projects.vercel.app",
+//     "http://localhost:3000",
+//     "https://bitebox-w.vercel.app"
+//   ],
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type'],
+// }));
+app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
+
 //anurag changed
 app.use(express.json());
 app.use(bodyParser.json());
@@ -100,10 +102,10 @@ app.post("/broadcast", async (req, res) => {
           resolve();
         }
       };
-      
+
       peer.onicegatheringstatechange = checkComplete;
       checkComplete(); // Check in case it's already complete
-      
+
       // Safety timeout
       setTimeout(resolve, 2000);
     });
@@ -128,8 +130,8 @@ app.post('/consumer', checkStreamExists, async (req, res) => {
 
     const peer = new webrtc.RTCPeerConnection({
       iceServers: [
-        { urls: "stun:stun.stunprotocol.org" },
-        { urls: "stun:stun.l.google.com:19302" }
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "turn:your-turn-server.com", username: "user", credential: "pass" }
       ]
     });
 
@@ -139,6 +141,7 @@ app.post('/consumer', checkStreamExists, async (req, res) => {
       if (event.candidate) {
         candidates.push(event.candidate);
       }
+      console.log("New ICE Candidate:", event.candidate);
     };
 
     const desc = new webrtc.RTCSessionDescription(req.body.sdp);
@@ -164,10 +167,10 @@ app.post('/consumer', checkStreamExists, async (req, res) => {
           resolve();
         }
       };
-      
+
       peer.onicegatheringstatechange = checkComplete;
       checkComplete(); // Check in case it's already complete
-      
+
       // Safety timeout
       setTimeout(resolve, 2000);
     });
